@@ -1,21 +1,23 @@
 # Module 11
 ## Andhika Nayaka Arya Wibowo - 2306174135
 
+---
+
 ## Reflection: Hello Minikube Tutorial
 
 ### 1. Application Logs Before and After Service Exposure
 
 Before exposing the pod as a service, the logs showed a one-time startup message indicating that the HTTP and UDP servers were started:
 
-![Startup Logs](module-11/img/sslogs.png)
+![Startup Logs](img/sslogs.png)
 
 After exposing the pod and accessing the app via `minikube service hello-node`, the logs updated **each time I opened the URL** in the browser. This indicates that every page visit triggers an HTTP request handled by the pod, confirming that the service routing works properly.
 
-![After Exposure Logs](module-11/img/ss1.png)
+![After Exposure Logs](img/ss1.png)
 
 Additionally, this combined view shows how the log evolves from just a startup message to multiple `GET /` events:
 
-![Explained Logs](module-11/img/ss2.png)
+![Explained Logs](img/ss2.png)
 
 ---
 
@@ -33,7 +35,7 @@ That's why I didn’t see my app in the `kube-system` namespace — user deploym
 
 This is the dashboard showing the status of my deployment, pod, and replicaset — all running properly:
 
-![Kubernetes Dashboard](module-11/img/dashboard.png)
+![Kubernetes Dashboard](img/dashboard.png)
 
 ---
 
@@ -45,5 +47,48 @@ This tutorial helped me understand:
 - Use services to expose pods to the outside world
 - Monitor the system with the Kubernetes Dashboard and `kubectl`
 - The concept and practical usage of namespaces in Kubernetes
+
+---
+
+## Reflection: Rolling Update & Kubernetes Manifest File
+
+### 1. What is the difference between Rolling Update and Recreate?
+
+The **Rolling Update** strategy updates pods gradually by creating new pods and terminating the old ones incrementally. This ensures **zero downtime**.
+
+In contrast, the **Recreate** strategy first **terminates all old pods**, then creates the new ones. This causes **downtime** but ensures a clean replacement.
+
+---
+
+### 2. Recreate Deployment Attempt
+
+I deployed the Spring Petclinic REST app using the `Recreate` strategy via a separate YAML manifest. Here’s a screenshot of the deployment process where old pods were terminated before new ones were created:
+
+![Recreate Termination](img/rollout-recreate-terminating.png)
+
+And here's the service exposure showing successful deployment:
+
+![Recreate Service](img/rollout-recreate-service.png)
+
+---
+
+### 3. Manifest Files for Recreate Strategy
+
+I created two files:
+- `recreate-deployment.yaml`
+- `recreate-service.yaml`
+
+Both are stored in the same directory as this README file.
+
+---
+
+### 4. Benefits of Kubernetes Manifest Files
+
+Using manifest files made my workflow more:
+- **Repeatable**: I could reapply the same configuration after deleting Minikube.
+- **Versioned**: Easy to track changes via Git commits.
+- **Clearer**: YAML lets me specify deployment strategies, port mapping, labels, and replicas cleanly.
+
+Compared to `kubectl` CLI deployment, manifests made the setup **much faster and reliable**, especially when re-deploying after wiping the cluster.
 
 ---
